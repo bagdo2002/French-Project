@@ -1,9 +1,9 @@
 <?php
 /* --------------- À personnaliser --------------- */
-$host = 'localhost';          // laisse « localhost » sur Hostinger
-$db   = '‹trinidad_db›';      // nom de la base créée dans le hPanel
-$user = '‹trinidad_user›';    // utilisateur MySQL
-$pass = '‹motDePasse›';       // mot de passe MySQL
+$host = 'localhost';          // Correct for local XAMPP
+$db   = 'french';            // The database you created
+$user = 'root';               // The default XAMPP user
+$pass = '';                  // The default XAMPP password is blank
 /* ----------------------------------------------- */
 
 $dsn  = "mysql:host=$host;dbname=$db;charset=utf8mb4";

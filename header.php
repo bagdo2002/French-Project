@@ -11,7 +11,7 @@ if (isset($_SESSION['user_id'])) {
 }
 ?>
 <header>
-  <img src="img/logo.png" alt="Logo Trinidad" />
+  <img style="border-radius: 50%; cursor: pointer" src="./logo.jpg" alt="Logo Trinidad">
   <h1>Trinidad Betting</h1>
 
   <div>
@@ -23,8 +23,8 @@ if (isset($_SESSION['user_id'])) {
       <a href="logout.php" class="btn">Déconnexion</a>
     <?php else: ?>
       <!-- Version visiteur -->
-      <a href="login.html"  class="btn">Se connecter</a>
-      <a href="signup.html" class="btn">S’inscrire</a>
+      <a href="login.html" class="btn">Se connecter</a>
+      <a href="inscription.html" class="btn">S’inscrire</a>
     <?php endif; ?>
   </div>
 </header>

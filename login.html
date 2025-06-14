@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Inscription – Trinidad Betting</title>
+    <title>Connexion – Trinidad Betting</title>
     <!-- Google Font -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&ampdisplay=swap"
       rel="stylesheet"
     />
     <style>
@@ -35,7 +35,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding:  2rem;
+        padding: 1rem 2rem;
         background: #121721;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
       }
@@ -62,26 +62,26 @@
         transform: scale(1.05);
       }
 
-      /* SIGNUP FORM */
-      .signup-container {
-        max-width: 460px;
+      /* LOGIN FORM */
+      .login-container {
+        max-width: 420px;
         margin: 5rem auto;
         background: var(--bg-card);
         padding: 2.5rem 2.5rem 3rem;
         border-radius: 12px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
       }
-      .signup-container h2 {
+      .login-container h2 {
         margin-bottom: 1.5rem;
         text-align: center;
       }
-      .signup-container label {
+      .login-container label {
         display: block;
         font-size: 0.9rem;
         margin-bottom: 0.3rem;
         font-weight: 600;
       }
-      .signup-container input {
+      .login-container input {
         width: 100%;
         padding: 0.65rem 0.8rem;
         margin-bottom: 1.2rem;
@@ -90,22 +90,35 @@
         background: #0d1117;
         color: var(--text-light);
       }
-      .signup-container .submit-btn {
+      .login-container .submit-btn {
         width: 100%;
         font-size: 1rem;
       }
 
-      .signup-container .login {
+      .login-container .forgot {
+        text-align: right;
+        margin-top: 1rem;
+      }
+      .login-container .forgot a {
+        color: var(--primary);
+        font-size: 0.85rem;
+        text-decoration: none;
+      }
+      .login-container .forgot a:hover {
+        text-decoration: underline;
+      }
+
+      .login-container .register {
         text-align: center;
         margin-top: 1.2rem;
         font-size: 0.85rem;
       }
-      .signup-container .login a {
+      .login-container .register a {
         color: var(--secondary);
         text-decoration: none;
         font-weight: 600;
       }
-      .signup-container .login a:hover {
+      .login-container .register a:hover {
         text-decoration: underline;
       }
     </style>
@@ -113,45 +126,38 @@
   <body>
     <header>
       <img
-        style="border-radius: 50%; cursor: pointer"
         src="./logo.jpg"
         alt="Logo Trinidad"
+        style="border-radius: 50%; cursor: pointer"
       />
       <h1 style="font-size: 23px;">Trinidad Betting</h1>
       <div>
-        <a href="index.html" class="btn">Accueil</a>
+        <a href="index.php" class="btn">Accueil</a>
       </div>
     </header>
 
     <main>
-      <div class="signup-container">
-        <h2>Inscription</h2>
-        <form action="#" method="post">
-          <label for="username">Nom d'utilisateur</label>
-          <input type="text" id="username" name="username" required />
-
-          <label for="phone">Numéro de téléphone</label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            pattern="[0-9+ ]{7,}"
-            required
-          />
-
-          <label for="email">Adresse e-mail</label>
+      <div class="login-container">
+        <h2>Connexion</h2>
+        <form action="login.php" method="post">
+          <label for="email">Adresse e‑mail</label>
           <input type="email" id="email" name="email" required />
 
           <label for="password">Mot de passe</label>
           <input type="password" id="password" name="password" required />
 
           <!-- Bouton d'envoi -->
-          <button type="submit" class="btn submit-btn">S'inscrire</button>
+          <button type="submit" class="btn submit-btn">Se connecter</button>
 
-          <!-- Lien vers Connexion -->
-          <div class="login">
-            Vous avez déjà un compte&nbsp;?
-            <a href="login.html">Connectez-vous</a>
+          <!-- Lien mot de passe oublié en dessous -->
+          <div class="forgot">
+            <a href="#">Mot de passe oublié&nbsp;?</a>
+          </div>
+
+          <!-- Invitation à s'inscrire -->
+          <div class="register">
+            Vous n'avez pas de compte&nbsp;?
+            <a href="signup.html">Inscrivez‑vous</a>
           </div>
         </form>
       </div>
