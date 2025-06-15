@@ -1,3 +1,28 @@
+<?php
+session_start();
+require 'config.php';
+
+$user = null;
+$message = '';
+
+if (isset($_SESSION['user_id'])) {
+  $sql = "SELECT username FROM users WHERE id = :id";
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute([':id' => $_SESSION['user_id']]);
+  $loggedInUser = $stmt->fetchColumn();
+
+  if ($loggedInUser) {
+    $user = $loggedInUser;
+  } else {
+    // User ID in session but not found in DB - perhaps deleted or issue
+    session_destroy(); // Clear invalid session
+    $message = "Your session is invalid. Please log in again.";
+  }
+} else {
+  // No user ID in session
+  $message = "Vous n'êtes pas connecté. Veuillez <a href=\"login.html\" style=\"color: var(--primary); text-decoration: none;\">vous connecter</a> ou <a href=\"inscription.html\" style=\"color: var(--primary); text-decoration: none;\">vous inscrire</a>.";
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -5,7 +30,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Trinidad Betting</title>
-  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
@@ -61,6 +85,12 @@
       display: flex;
       gap: 0.5rem;
       justify-self: end;
+      align-items: center;
+    }
+
+    .header-actions .username {
+      font-weight: 600;
+      margin-right: 0.5rem;
     }
 
     .header-actions .btn {
@@ -73,11 +103,30 @@
       color: #000;
       transition: transform 0.15s;
       white-space: nowrap;
+      text-decoration: none;
     }
 
     .header-actions .btn:hover {
       transform: scale(1.05);
     }
+
+    /* ---------- WELCOME BANNER (NEW) ---------- */
+    .welcome-banner {
+      background: var(--bg-card);
+      text-align: center;
+      padding: 1.2rem 1rem;
+      border-bottom: 3px solid var(--primary);
+    }
+
+    .welcome-banner p {
+      line-height: 1.5;
+    }
+
+    .welcome-banner strong {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
 
     /* ---------- HERO WRAPPER (Column Layout) ---------- */
     .hero {
@@ -354,28 +403,41 @@
 </head>
 
 <body>
-  <!-- ---------- HEADER ---------- -->
   <header>
     <div class="header-container">
-      <img src="./logo.jpg" style="border-radius: 50%; cursor: pointer" alt="Logo Trinidad" class="header-logo" />
+      <img style="border-radius: 50%; cursor: pointer" src="./logo.jpg" alt="Logo Trinidad" class="header-logo" />
       <h1 class="header-title">Trinidad Betting</h1>
       <div class="header-actions">
-        <button class="btn" onclick="location.href='login.html'">
-          Se connecter
-        </button>
-        <button class="btn" onclick="location.href='inscription.html'">
-          S’inscrire
-        </button>
+        <?php if ($user): ?>
+          <span class="username"><?= htmlspecialchars($user) ?></span>
+          <a class="btn" href="logout.php">Déconnexion</a>
+        <?php else: ?>
+          <a class="btn" href="login.html">Connexion</a>
+          <a class="btn" onclick="location.href='inscription.html'">S'inscrire</a>
+        <?php endif; ?>
       </div>
     </div>
   </header>
 
-  <!-- ---------- HERO ---------- -->
+  <?php if ($user): ?>
+    <div class="welcome-banner">
+      <p>
+        <strong>Bienvenue <?= htmlspecialchars($user) ?> !</strong><br>
+        Vos abonnements en cours : Aucun
+      </p>
+    </div>
+  <?php endif; ?>
+
+  <?php if ($message && !$user): ?>
+    <div style="color: var(--text-light); text-align: center; padding: 10px; margin: 10px auto; max-width: 800px;">
+      <?= $message ?>
+    </div>
+  <?php endif; ?>
+
   <main class="hero">
-    <!-- RIGHT / CARD (appears first) -->
     <section class="hero-right">
       <p class="tagline">
-        Plusieurs centaines de milliers d’euros gagnés chaque année :
+        Plusieurs centaines de milliers d'euros gagnés chaque année :
         transformez votre passion pour le sport en investissement rentable.
       </p>
       <div class="card">
@@ -396,9 +458,9 @@
           <h3>Caractéristiques</h3>
           <ul>
             <li id="roi">ROI : +25%</li>
-            <li id="mise">Mise moyenne : 50 €</li>
+            <li id="mise">Mise moyenne : 50 €</li>
             <li id="nb">Nombre de paris moyen : 30/mois</li>
-            <li id="cout">Coût abonnement : 49 €/mois</li>
+            <li id="cout">Coût abonnement : 49 €/mois</li>
           </ul>
         </div>
 
@@ -407,25 +469,24 @@
           <label for="bankroll">Bankroll (€) : <span id="bankrollValue">1000</span></label>
           <input type="range" id="bankroll" min="100" max="20000" step="100" value="1000" />
           <ul>
-            <li id="gainMois">Gain estimé par mois : 250 €</li>
-            <li id="gainAn">Gain estimé par an : 3 000 €</li>
+            <li id="gainMois">Gain estimé par mois : 250 €</li>
+            <li id="gainAn">Gain estimé par an : 3 000 €</li>
           </ul>
         </div>
 
         <div class="cart">
-          <span class="price" id="price">49 €</span>
+          <span class="price" id="price">49 €</span>
           <button class="cart-btn" id="addCart">Ajouter au panier 🛒</button>
         </div>
       </div>
     </section>
 
-    <!-- LEFT / TESTIMONIALS (appears second) -->
     <section class="hero-left">
       <div class="testimonials">
         <button class="arrow" id="prevT">&#8249;</button>
         <div class="testimonial" id="testimonialBox">
           <p class="quote">
-            « J’ai triplé ma bankroll en six mois grâce aux défis ! »
+            « J'ai triplé ma bankroll en six mois grâce aux défis ! »
           </p>
           <p class="author">- Antoine B.</p>
         </div>
@@ -434,12 +495,10 @@
     </section>
   </main>
 
-  <!-- ---------- FOOTER ---------- -->
   <footer>
     <p>&copy; 2025 Trinidad Betting. All Rights Reserved.</p>
   </footer>
 
-  <!-- ---------- SCRIPTS ---------- -->
   <script>
     /* OFFERS DATA */
     const offers = {
@@ -547,7 +606,7 @@
     /* ---------- TESTIMONIALS ---------- */
     const testimonials = [
       {
-        quote: "« J’ai triplé ma bankroll en six mois grâce aux défis ! »",
+        quote: "« J'ai triplé ma bankroll en six mois grâce aux défis ! »",
         author: "- Antoine B.",
       },
       {
@@ -556,7 +615,7 @@
         author: "- Laura M.",
       },
       {
-        quote: "« La côte boostée a payé mes vacances d’été ! »",
+        quote: "« La côte boostée a payé mes vacances d'été ! »",
         author: "- Marc L.",
       },
       {

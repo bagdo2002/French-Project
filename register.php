@@ -2,40 +2,37 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-session_start();
 require 'config.php';
 
-$error = '';
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    /* 1. Récupération des champs */
     $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-    $pass  = $_POST['password'] ?? '';
-
-    if (!$email || !$pass) {
-        $error = 'Merci de remplir tous les champs.';
-    } else {
-        /* 2. Cherche l'utilisateur par e-mail */
-        $sql  = "SELECT id, password_hash FROM users WHERE email = :mail";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([':mail' => $email]);
-        $user = $stmt->fetch();
-
-        /* 3. Vérification du mot de passe */
-        if ($user && password_verify($pass, $user['password_hash'])) {
-            $_SESSION['user_id'] = $user['id'];      // on stocke l'ID en session
-            header('Location: index.php'); // page protégée à créer
+    $password = $_POST['password'] ?? '';
+    
+    if ($email && $password) {
+        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+        
+        try {
+            $sql = "INSERT INTO users (email, password_hash) VALUES (:email, :password_hash)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                ':email' => $email,
+                ':password_hash' => $password_hash
+            ]);
+            
+            header('Location: login.php');
             exit;
-        } else {
-            $error = 'E-mail ou mot de passe incorrect.';
+        } catch (PDOException $e) {
+            $error = "Erreur lors de l'inscription. L'email est peut-être déjà utilisé.";
         }
+    } else {
+        $error = "Veuillez remplir tous les champs correctement.";
     }
 }
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Connexion</title>
+    <title>Inscription</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -74,8 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
-    <h1>Connexion</h1>
-    <?php if ($error) echo "<p class='error'>$error</p>"; ?>
+    <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
     
     <form method="POST">
         <div class="form-group">
@@ -86,8 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="password">Mot de passe:</label>
             <input type="password" id="password" name="password" required>
         </div>
-        <button type="submit">Se connecter</button>
+        <button type="submit">S'inscrire</button>
     </form>
-    <p>Pas encore de compte? <a href="register.php">Inscrivez-vous ici</a></p>
+    <p>Déjà inscrit? <a href="login.php">Connectez-vous ici</a></p>
 </body>
-</html>
+</html> 
